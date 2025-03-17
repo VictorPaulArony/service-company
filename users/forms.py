@@ -16,19 +16,39 @@ def validate_email(value):
         raise ValidationError(
             value + " is already taken.")
 
-
+# Customer Registration Form
 class CustomerSignUpForm(UserCreationForm):
-    pass
+    birth = forms.DateField(widget=DateInput, required=False)
 
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
 
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_customer = True
+        user.save()
+        Customer.objects.create(user=user, birth=self.cleaned_data.get("birth"))
+        return user
+
+# Company Registration Form
 class CompanySignUpForm(UserCreationForm):
-    pass
+    field = forms.ChoiceField(choices=Company._meta.get_field("field").choices)
 
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_company = True
+        user.save()
+        Company.objects.create(user=user, field=self.cleaned_data["field"])
+        return user
 
 class UserLoginForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
-
     email = forms.EmailField(widget=forms.TextInput(
         attrs={'placeholder': 'Enter Email'}))
     password = forms.CharField(

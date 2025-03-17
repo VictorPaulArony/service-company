@@ -7,12 +7,12 @@ from .models import User, Customer, Company
 class UserAdmin(admin.ModelAdmin):
     list_display = ("id", "username", "email")
 
-
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ("user", "field")
+    list_display = ('user', 'field', 'rating')
 
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ("user", "birth")
+

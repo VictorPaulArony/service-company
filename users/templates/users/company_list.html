@@ -1,0 +1,14 @@
+{% extends "main/base.html" %}
+
+{% block title %}Company List{% endblock %}
+
+{% block content %}
+    <h1>Company List</h1>
+    <ul>
+        {% for company in companies %}
+            <li><a href="{% url 'company_profile' company.user.username %}">{{ company.name }}</a></li>
+        {% empty %}
+            <p>No companies available.</p>
+        {% endfor %}
+    </ul>
+{% endblock %}
