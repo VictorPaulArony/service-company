@@ -1,14 +1,20 @@
 from django import forms
 
-from users.models import Company
+# from users.models import Company
 
 
 class CreateNewService(forms.Form):
-    name = forms.CharField(max_length=40)
-    description = forms.CharField(widget=forms.Textarea, label='Description')
+    name = forms.CharField(max_length=40, widget=forms.TextInput(attrs={'placeholder': 'Enter Service Name', 'autocomplete': 'off'}))
+    name = forms.CharField(max_length=40, widget=forms.TextInput(attrs={'placeholder': 'Enter Service Name', 'autocomplete': 'off'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter Description'}))
     price_hour = forms.DecimalField(
-        decimal_places=2, max_digits=5, min_value=0.00)
+        decimal_places=2, max_digits=5, widget=forms.NumberInput(attrs={'placeholder': 'Enter Price per Hour'}))
     field = forms.ChoiceField(required=True)
+    # name = forms.CharField(max_length=40)
+    # description = forms.CharField(widget=forms.Textarea, label='Description')
+    # price_hour = forms.DecimalField(
+    #     decimal_places=2, max_digits=5, min_value=0.00)
+    # field = forms.ChoiceField(required=True)
 
     def __init__(self, *args, choices='', ** kwargs):
         super(CreateNewService, self).__init__(*args, **kwargs)
