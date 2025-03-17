@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.shortcuts import render
+# from django.http import HttpResponseRedirect
 
-from users.models import Company, Customer, User
+from users.models import Company
 
 from .models import Service
-from .forms import CreateNewService, RequestServiceForm
+# from .forms import CreateNewService, RequestServiceForm
 
 
 def service_list(request):
@@ -31,3 +31,8 @@ def service_field(request, field):
 
 def request_service(request, id):
     return render(request, 'services/request_service.html', {})
+
+
+def company_list(request):
+    companies = Company.objects.all()
+    return render(request, 'users/company_list.html', {'companies': companies})
