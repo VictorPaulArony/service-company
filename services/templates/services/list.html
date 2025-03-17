@@ -1,18 +1,27 @@
 {% extends 'main/base.html' %}
+
 {% block title %}
     Services List
 {% endblock %}
+
 {% block content %}
     <p class="title">Services</p>
-    {% if user.is_company %}
-        <a class="create_service" href="/services/create"> Create Service</a>
+    
+    {% if user.is_authenticated and user.is_company %}
+        <a class="create_service" href="{% url 'services_create' %}">Create Service</a>
     {% endif %}
-    <div class='services_list'>
+    
+    <div class="services_list">
         {% if services %}
-            {% for service in services.all %}
-            {% endfor %}
+            <ul>
+                {% for service in services %}
+                    <li>
+                        <a href="{% url 'index' service.id %}">{{ service.name }}</a> - {{ service.price_hour }}€/hour
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
-            <h2>Sorry No services available yet</h2>
+            <h2>Sorry, no services available yet.</h2>
         {% endif %}
-     </div>
+    </div>
 {% endblock %}
