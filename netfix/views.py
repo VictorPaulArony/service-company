@@ -19,3 +19,8 @@ def company_profile(request, name):
         company=Company.objects.get(user=user)).order_by("-date")
 
     return render(request, 'users/profile.html', {'user': user, 'services': services})
+
+
+def company_list(request):
+    companies = Company.objects.all()
+    return render(request, 'users/company_list.html', {'companies': companies})
