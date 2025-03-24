@@ -32,6 +32,11 @@ class CustomerSignUpForm(UserCreationForm):
         Customer.objects.create(user=user, birth=self.cleaned_data.get("birth"))
         return user
 
+class CustomerLoginForm(forms.Form):
+    email = forms.EmailField()
+    password = forms.CharField(widget = forms.PasswordInput)
+
+
 # Company Registration Form
 class CompanySignUpForm(UserCreationForm):
     field = forms.ChoiceField(choices=Company._meta.get_field("field").choices)
