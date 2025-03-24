@@ -16,7 +16,7 @@ class CustomerSignUpForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2"]
+        fields = ["username", "email", "password", "password2"]
 
     def clean(self):
         cleaned_data = super().clean()
@@ -35,11 +35,11 @@ class CompanySignUpForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2"]
+        fields = ["username", "email", "password", "password2"]
 
     def clean(self):
        cleaned_data = super().clean()
-       password = cleaned_data.get("password1")
+       password = cleaned_data.get("password")
        password2 = cleaned_data.get("password2")
        
        if password and password2 and password != password2:
