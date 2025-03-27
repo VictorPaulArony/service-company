@@ -118,6 +118,10 @@ button:hover {
   padding: 0 30px;
   list-style-type: none;
 }
+
+.ligin_container{
+  display: flex;
+}
 .navbar ul li:not(:last-child) {
   margin-right: 40px;
 }

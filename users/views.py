@@ -1,56 +1,74 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-# from django.views.generic import CreateView, TemplateView
+from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic import CreateView, TemplateView
 
-from .forms import CustomerSignUpForm, CompanySignUpForm, LoginForm
+from .forms import CustomerSignUpForm, CompanySignUpForm, UserLoginForm
 from .models import User, Company, Customer
 
 
-#view of the customer registration 
-def register_customer(request):
-    if request.Method == "POST":
-        form = CustomerSignUpForm(request.POST)
-        if form.is_valid():
-            user = user.objects.create_user(
-                email=form.cleaned_data['email'],
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password'],
-                is_customer=True
-            )
-            Customer.objects.create(user=user, date_of_birth=form.cleaned_data['date_of_birth'])
-            return redirect('login')
-        else:
-          form = CustomerSignUpForm()
-    return render(request, 'register_customer.html', {'form': form})  
+def register(request):
+    return render(request, 'users/register.html')
 
-#view for the company registration 
-def register_company(request):
-    if request.method == "POST":
-        form = CompanySignUpForm(request.POST)
-        if form.is_valid():
-            user = User.objects.create_user(
-                email=form.cleaned_data['email'],
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password'],
-                is_company=True
-            )
-            Company.objects.create(user=user, field_of_work=form.cleaned_data['field_of_work'])
-            return redirect('login')
-    else:
-        form = CompanySignUpForm()
-    return render(request, 'register_company.html', {'form': form})
 
-def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(data=request.POST)
+class CustomerSignUpView(CreateView):
+    model = User
+    form_class = CustomerSignUpForm
+    template_name = 'users/register_customer.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'customer'
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('/')
+
+
+class CompanySignUpView(CreateView):
+    model = User
+    form_class = CompanySignUpForm
+    template_name = 'users/register_company.html'
+
+    def get_context_data(self, **kwargs):
+        kwargs['user_type'] = 'company'
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return redirect('/')
+
+
+def LoginUserView(request):
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(email=form.cleaned_data['username'], password=form.cleaned_data['password'])
-            if user:
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = authenticate(email, password)
+            if user is not None:
                 login(request, user)
-                return redirect('home')
+                if user.is_company:
+                    company = Company.objects.get(user=user)
+                    company.save()
+                if user.is_customer:
+                    customer = Customer.objects.filter(user=user).first()
+                    customer.save()
+                return redirect('/')
+            else:
+                form.add_error(None, 'Invalid email or password.')
     else:
-        form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+        form = UserLoginForm()
 
-def home(request):
-    return render(request, 'home.html')
+    return render(request, 'users/login.html', {'form': form})
+
+def authenticate(email, password):
+        try:
+            user = User.objects.get(email=email)
+            if user.check_password(password):
+                return user
+        except User.DoesNotExist:
+            return None
+        return None
