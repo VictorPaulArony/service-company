@@ -1,7 +1,5 @@
 from django.contrib import admin
-
 from .models import User, Customer, Company
-
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -9,10 +7,8 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ('user', 'field', 'rating')
-
+    list_display = ("user", "field")
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ("user", "birth")
-
+    list_display = ("user", "date_of_birth") 
